@@ -10,7 +10,7 @@ from .base import LLMClient, Message, parse_json_object
 __all__ = ["LLMClient", "Message", "build_client", "parse_json_object"]
 
 DEFAULT_MODELS = {
-    "gemini": "gemini-2.5-flash",
+    "gemini": "gemini-3.8-flash",
     "openai": "gpt-4o-mini",
 }
 

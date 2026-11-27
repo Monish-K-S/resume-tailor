@@ -26,6 +26,18 @@ class OpenAICompatClient:
         # Only OpenAI itself is guaranteed to support strict json_schema.
         self._strict_schema = base_url is None or "api.openai.com" in base_url
 
+    def ping(self) -> None:
+        """Make one tiny live request to prove the key and model work."""
+        try:
+            self._client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": "Reply with: ok"}],
+                temperature=0.0,
+                max_tokens=5,
+            )
+        except Exception as exc:  # SDK raises provider-specific errors
+            raise LLMError(f"API request failed: {exc}") from exc
+
     def complete(
         self,
         *,

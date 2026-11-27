@@ -368,6 +368,12 @@ def _term_known(term: str, corpus: FactCorpus) -> bool:
     return False
 
 
+def _all_words_known(term: str, corpus: FactCorpus) -> bool:
+    """A phrase made only of known words is not a new claim."""
+    words = normalize_text(term).split()
+    return bool(words) and all(_term_known(word, corpus) for word in words)
+
+
 def check_facts(corpus: FactCorpus, body_tex: str) -> list[Violation]:
     claims = extract_claims(body_tex)
     violations: list[Violation] = []
@@ -409,6 +415,8 @@ def check_facts(corpus: FactCorpus, body_tex: str) -> list[Violation]:
             continue
         seen.add(key)
         if _term_known(claim.term, corpus):
+            continue
+        if claim.kind == "phrase" and _all_words_known(claim.term, corpus):
             continue
         violations.append(
             Violation(

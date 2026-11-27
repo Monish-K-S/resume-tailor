@@ -50,9 +50,16 @@ resumes/stripe_2026-11-27/
 
 Open `resume.pdf`. That's it.
 
+> **Always use the venv's Python.** After `source .venv/bin/activate`, `python`
+> is the venv interpreter. If you skip activation, call
+> `.venv/bin/python tailor.py ...` explicitly. If your shell aliases `python`
+> to a system interpreter (common on macOS), the CLI detects it and re-execs
+> itself with `.venv/bin/python` automatically. Set
+> `RESUME_TAILOR_NO_VENV=1` to disable that.
+
 > **First time only:** if `--check` reports `pdflatex FAIL`, install TeX — see
-> [Installing TeX](#installing-tex). If it reports `provider FAIL`, your API key
-> is missing or in the wrong place.
+> [Installing TeX](#installing-tex). If it reports `provider FAIL`, the message
+> is the real API error (bad key, retired model, network).
 
 ---
 
@@ -165,7 +172,10 @@ from.
 
 | Message | What to do |
 | --- | --- |
-| `GEMINI_API_KEY (or GOOGLE_API_KEY) is not set` | Put the key in `.env` at the project root, or export it in your shell. |
+| `GEMINI_API_KEY (or GOOGLE_API_KEY) is not set` | Put the key in `.env` at the project root, or export it in your shell. Also make sure you are running the venv's Python (see [Quick start](#quick-start)). |
+| `google-genai is not installed` even though you installed it | Your shell's `python` is probably an alias to a system interpreter that bypasses the venv. Run `.venv/bin/python tailor.py ...`, or let the CLI re-exec automatically (default). |
+| `404 NOT_FOUND ... no longer available to new users` | The model was retired. Set `RESUME_TAILOR_MODEL` to a current model (the default is `gemini-3.8-flash`). |
+| `503 UNAVAILABLE` / `Connection reset` | Transient provider or network failure. The client retries twice automatically; re-run if it persists. |
 | `pdflatex not found` | Install BasicTeX/MacTeX or TeX Live, then run `python tailor.py --check`. |
 | `File 'enumitem.sty' not found` | `sudo tlmgr install enumitem titlesec cm-super`, or use `tlmgr --usermode`. |
 | `still 2 pages after one retry` | The content is too long. Trim `profile.json` or `base/resume.tex`, or allow `--max-pages 2`. |
@@ -259,7 +269,7 @@ bottom.
 | `--clipboard` | Read the JD from the clipboard. |
 | `--jd-file PATH` | Read the JD from a file. |
 | `--stdin` | Read the JD from stdin without printing the prompt. |
-| `--check` | Check inputs, TeX tools and API configuration, then exit. |
+| `--check` | Check inputs, TeX tools and API configuration (makes one live provider call), then exit. |
 | `--strict` | Treat unverified skills/terms as fatal instead of warnings. |
 | `--max-pages N` | Page limit (default `1`). |
 | `--provider NAME` | `gemini` (default) or an OpenAI-compatible provider. |
@@ -277,7 +287,7 @@ automatically, so it works from any directory.
 
 | Provider | `RESUME_TAILOR_PROVIDER` | Key | Default model |
 | --- | --- | --- | --- |
-| Gemini | `gemini` | `GEMINI_API_KEY` or `GOOGLE_API_KEY` | `gemini-2.5-flash` |
+| Gemini | `gemini` | `GEMINI_API_KEY` or `GOOGLE_API_KEY` | `gemini-3.8-flash` |
 | OpenAI | `openai` | `OPENAI_API_KEY` | `gpt-4o-mini` |
 | OpenRouter | `openrouter` | `OPENAI_API_KEY` | required |
 | Groq | `groq` | `OPENAI_API_KEY` | required |
@@ -300,9 +310,10 @@ RESUME_TAILOR_MODEL=llama3.1 \
 python tailor.py --company acme
 ```
 
-The tool makes **at most three API calls** per run: one generation, one compile
-fix, one page cut. A typical successful run is one call and finishes in
-10–30 seconds with Gemini Flash.
+The tool makes **at most three generation calls** per run: one generation, one
+compile fix, one page cut. A typical successful run is one call and finishes in
+10–30 seconds with Gemini Flash. Transient `429`/`5xx`/connection errors are
+retried twice at the transport level before the run fails.
 
 ---
 

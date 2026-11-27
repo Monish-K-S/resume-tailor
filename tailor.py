@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import shutil
 import sys
@@ -26,12 +27,81 @@ PROMPT_PATH = PROJECT_ROOT / "prompt.md"
 MAX_JD_CHARS = 60_000
 
 
+def _parse_dotenv(path: Path) -> None:
+    """Minimal stdlib .env parser, used when python-dotenv is unavailable."""
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return
+
+    for raw in lines:
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("export "):
+            line = line[len("export ") :].strip()
+        if "=" not in line:
+            continue
+
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip()
+        if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", key):
+            continue
+
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+            quote = value[0]
+            value = value[1:-1]
+            if quote == '"':
+                value = value.replace("\\n", "\n").replace('\\"', '"')
+        else:
+            comment = value.find(" #")
+            if comment != -1:
+                value = value[:comment].rstrip()
+
+        os.environ.setdefault(key, value)
+
+
 def _load_env() -> None:
+    path = PROJECT_ROOT / ".env"
     try:
         from dotenv import load_dotenv
     except ImportError:
+        if path.exists():
+            _parse_dotenv(path)
         return
-    load_dotenv(PROJECT_ROOT / ".env")
+    load_dotenv(path)
+
+
+def _use_project_venv(argv: list[str] | None, *, verbose: bool = False) -> None:
+    """Re-exec with .venv/bin/python so shell aliases and shims cannot bypass it.
+
+    A common macOS setup aliases ``python`` to a system interpreter, which
+    shadows the activated venv. Re-execing keeps ``python tailor.py`` working
+    and guarantees the project's dependencies are the ones in use.
+    """
+    if argv is not None or os.environ.get("RESUME_TAILOR_NO_VENV") == "1":
+        return
+
+    venv_root = PROJECT_ROOT / ".venv"
+    relative = Path("Scripts/python.exe") if os.name == "nt" else Path("bin/python")
+    venv_python = venv_root / relative
+    if not venv_python.exists():
+        return
+
+    try:
+        if Path(sys.prefix).resolve() == venv_root.resolve():
+            return
+    except OSError:
+        return
+
+    if verbose:
+        print(f"note: using the project venv interpreter ({venv_python})", file=sys.stderr)
+
+    try:
+        os.execv(str(venv_python), [str(venv_python), *sys.argv])
+    except OSError:
+        return
 
 
 def _read_text(path: Path, label: str) -> str:
@@ -193,9 +263,27 @@ def _check(args: argparse.Namespace) -> int:
 
     try:
         client = build_client(args.provider, args.model)
-        rows.append(("provider", True, f"{type(client).__name__} / {client.model}"))
     except ConfigError as exc:
         rows.append(("provider", False, exc.message))
+    else:
+        try:
+            client.ping()
+        except Exception as exc:
+            detail = " ".join(str(exc).split())[:240]
+            hint = (
+                " (transient provider error; try again)"
+                if "503" in detail or "unavailable" in detail.casefold()
+                else ""
+            )
+            rows.append(("provider", False, f"{client.model}: {detail}{hint}"))
+        else:
+            rows.append(
+                (
+                    "provider",
+                    True,
+                    f"{type(client).__name__} / {client.model} (live)",
+                )
+            )
 
     width = max(len(label) for label, _, _ in rows)
     for label, ok, detail in rows:
@@ -293,6 +381,7 @@ def _parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
+    _use_project_venv(argv, verbose=args.verbose)
     _load_env()
 
     if args.check:

@@ -25,7 +25,7 @@ def test_gemini_is_the_default_provider(monkeypatch):
     client = build_client()
 
     assert type(client).__name__ == "GeminiClient"
-    assert client.model == "gemini-2.5-flash"
+    assert client.model == "gemini-3.8-flash"
 
 
 def test_gemini_without_key_is_a_config_error(monkeypatch):

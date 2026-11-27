@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -165,3 +166,183 @@ def test_check_mode_reports_missing_provider_key(project, monkeypatch, capsys):
     assert code == 2
     assert "provider" in out
     assert "GEMINI_API_KEY" in out
+
+
+def _check_args():
+    return type("Args", (), {"provider": None, "model": None})()
+
+
+def _stub_tools(monkeypatch):
+    monkeypatch.setattr(tailor, "find_pdflatex", lambda: "/usr/bin/pdflatex")
+    monkeypatch.setattr(tailor.shutil, "which", lambda name: f"/usr/bin/{name}")
+
+
+def test_check_mode_makes_a_live_provider_call(project, monkeypatch, capsys):
+    _stub_tools(monkeypatch)
+
+    class FakeClient:
+        model = "gemini-3.8-flash"
+
+        def ping(self):
+            return None
+
+    monkeypatch.setattr(tailor, "build_client", lambda provider, model: FakeClient())
+
+    assert tailor._check(_check_args()) == 0
+
+    out = capsys.readouterr().out
+    assert "gemini-3.8-flash (live)" in out
+
+
+def test_check_mode_reports_live_provider_failure(project, monkeypatch, capsys):
+    _stub_tools(monkeypatch)
+
+    class FakeClient:
+        model = "gemini-3.8-flash"
+
+        def ping(self):
+            raise RuntimeError("503 UNAVAILABLE: high demand")
+
+    monkeypatch.setattr(tailor, "build_client", lambda provider, model: FakeClient())
+
+    assert tailor._check(_check_args()) == 2
+
+    out = capsys.readouterr().out
+    assert "provider" in out
+    assert "503 UNAVAILABLE" in out
+    assert "transient provider error" in out
+
+
+def test_parse_dotenv_handles_real_world_syntax(tmp_path, monkeypatch):
+    for name in (
+        "EXPORTED",
+        "PLAIN",
+        "QUOTED",
+        "SINGLE",
+        "INLINE",
+        "HASH_URL",
+        "EMPTY",
+        "COMMENTED",
+    ):
+        monkeypatch.delenv(name, raising=False)
+
+    path = tmp_path / ".env"
+    path.write_text(
+        "\n".join(
+            [
+                "# a comment",
+                "export EXPORTED=one",
+                "PLAIN=two",
+                'QUOTED="three four"',
+                "SINGLE='five six'",
+                "INLINE=seven # trailing comment",
+                "HASH_URL=https://example.com/#frag",
+                "EMPTY=",
+                "# COMMENTED=ignored",
+                "NOT A KEY=ignored",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    tailor._parse_dotenv(path)
+
+    assert os.environ["EXPORTED"] == "one"
+    assert os.environ["PLAIN"] == "two"
+    assert os.environ["QUOTED"] == "three four"
+    assert os.environ["SINGLE"] == "five six"
+    assert os.environ["INLINE"] == "seven"
+    assert os.environ["HASH_URL"] == "https://example.com/#frag"
+    assert os.environ["EMPTY"] == ""
+    assert "COMMENTED" not in os.environ
+    assert "NOT A KEY" not in os.environ
+
+
+def test_parse_dotenv_does_not_override_existing_values(tmp_path, monkeypatch):
+    monkeypatch.setenv("ALREADY_SET", "from-shell")
+
+    path = tmp_path / ".env"
+    path.write_text("ALREADY_SET=from-file\n", encoding="utf-8")
+    tailor._parse_dotenv(path)
+
+    assert os.environ["ALREADY_SET"] == "from-shell"
+
+
+def _make_venv(root: Path) -> Path:
+    binary = root / ".venv" / "bin"
+    binary.mkdir(parents=True)
+    python = binary / "python"
+    python.write_text("#!/bin/sh\n", encoding="utf-8")
+    python.chmod(0o755)
+    return python
+
+
+def test_reexec_switches_to_the_project_venv(tmp_path, monkeypatch):
+    python = _make_venv(tmp_path)
+    monkeypatch.setattr(tailor, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(tailor.sys, "prefix", str(tmp_path / "system-python"))
+    monkeypatch.delenv("RESUME_TAILOR_NO_VENV", raising=False)
+
+    calls: list[tuple[str, list[str]]] = []
+    monkeypatch.setattr(tailor.os, "execv", lambda path, args: calls.append((path, args)))
+
+    tailor._use_project_venv(None)
+
+    assert calls
+    assert calls[0][0] == str(python)
+    assert calls[0][1][0] == str(python)
+
+
+def test_reexec_is_skipped_inside_the_venv(tmp_path, monkeypatch):
+    _make_venv(tmp_path)
+    monkeypatch.setattr(tailor, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(tailor.sys, "prefix", str(tmp_path / ".venv"))
+    monkeypatch.delenv("RESUME_TAILOR_NO_VENV", raising=False)
+
+    calls: list[tuple[str, list[str]]] = []
+    monkeypatch.setattr(tailor.os, "execv", lambda path, args: calls.append((path, args)))
+
+    tailor._use_project_venv(None)
+
+    assert calls == []
+
+
+def test_reexec_can_be_disabled(tmp_path, monkeypatch):
+    _make_venv(tmp_path)
+    monkeypatch.setattr(tailor, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(tailor.sys, "prefix", str(tmp_path / "system-python"))
+    monkeypatch.setenv("RESUME_TAILOR_NO_VENV", "1")
+
+    calls: list[tuple[str, list[str]]] = []
+    monkeypatch.setattr(tailor.os, "execv", lambda path, args: calls.append((path, args)))
+
+    tailor._use_project_venv(None)
+
+    assert calls == []
+
+
+def test_reexec_is_skipped_for_programmatic_calls(tmp_path, monkeypatch):
+    _make_venv(tmp_path)
+    monkeypatch.setattr(tailor, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(tailor.sys, "prefix", str(tmp_path / "system-python"))
+    monkeypatch.delenv("RESUME_TAILOR_NO_VENV", raising=False)
+
+    calls: list[tuple[str, list[str]]] = []
+    monkeypatch.setattr(tailor.os, "execv", lambda path, args: calls.append((path, args)))
+
+    tailor._use_project_venv(["--check"])
+
+    assert calls == []
+
+
+def test_reexec_is_skipped_without_a_venv(tmp_path, monkeypatch):
+    monkeypatch.setattr(tailor, "PROJECT_ROOT", tmp_path)
+    monkeypatch.setattr(tailor.sys, "prefix", str(tmp_path / "system-python"))
+    monkeypatch.delenv("RESUME_TAILOR_NO_VENV", raising=False)
+
+    calls: list[tuple[str, list[str]]] = []
+    monkeypatch.setattr(tailor.os, "execv", lambda path, args: calls.append((path, args)))
+
+    tailor._use_project_venv(None)
+
+    assert calls == []

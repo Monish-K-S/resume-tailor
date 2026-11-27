@@ -16,6 +16,9 @@ class Message:
 
 
 class LLMClient(Protocol):
+    def ping(self) -> None:
+        """Make one tiny live request to prove the key and model work."""
+
     def complete(
         self,
         *,

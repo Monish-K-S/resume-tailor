@@ -7,6 +7,7 @@ from tailorlib.models import Severity
 
 PROFILE = {
     "name": "Jane Doe",
+    "tagline": "Proven engineer",
     "skills": ["Python", "PostgreSQL", "Node.js", "React.js", "Apache Kafka"],
     "metrics": "Reduced latency by 37% (22.8s to 14.4s)",
     "links": {
@@ -93,6 +94,10 @@ def test_known_phrase_passes(corpus):
 def test_invented_phrase_is_a_single_warning(corpus):
     violations = warnings(check(corpus, "Built pipelines with Apache Spark."))
     assert [v.term for v in violations] == ["Apache Spark"]
+
+
+def test_phrase_of_known_words_is_not_a_warning(corpus):
+    assert warnings(check(corpus, "Apache Kafka Proven results.")) == []
 
 
 def test_latex_to_text_drops_layout_but_keeps_link_text():
