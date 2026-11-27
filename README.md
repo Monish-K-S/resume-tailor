@@ -29,7 +29,7 @@ pip install -r requirements.txt
 
 # 2. Add your API key
 cp .env.example .env
-# open .env and set GEMINI_API_KEY=...
+# open .env and set TOKENHARBOR_API_KEY=... (free DeepSeek V4.1 Flash)
 
 # 3. Check that Python, TeX and the API key are all found
 python tailor.py --check
@@ -74,7 +74,7 @@ Open `resume.pdf`. That's it.
 - **Python 3.11+**
 - **A TeX distribution** with `pdflatex` (BasicTeX is enough on macOS)
 - **`pdfinfo` and `pdftotext`** (from `poppler`)
-- **An API key** for Gemini (default) or any OpenAI-compatible provider
+- **An API key** for TokenHarbor (default) or any OpenAI-compatible provider
 
 ### Installing TeX
 
@@ -186,9 +186,10 @@ from.
 
 | Message | What to do |
 | --- | --- |
-| `GEMINI_API_KEY (or GOOGLE_API_KEY) is not set` | Put the key in `.env` at the project root, or export it in your shell. Also make sure you are running the venv's Python (see [Quick start](#quick-start)). |
+| `TOKENHARBOR_API_KEY (or OPENAI_API_KEY) is not set` | Put the key in `.env` at the project root, or export it in your shell. Also make sure you are running the venv's Python (see [Quick start](#quick-start)). |
+| `GEMINI_API_KEY (or GOOGLE_API_KEY) is not set` | Only used with `--provider gemini`. Put the key in `.env` or export it. |
 | `google-genai is not installed` even though you installed it | Your shell's `python` is probably an alias to a system interpreter that bypasses the venv. Run `.venv/bin/python tailor.py ...`, or let the CLI re-exec automatically (default). |
-| `404 NOT_FOUND ... no longer available to new users` | The model was retired. Set `RESUME_TAILOR_MODEL` to a current model (the default is `gemini-3.8-flash`). |
+| `404 NOT_FOUND ... no longer available to new users` | The model was retired. Set `RESUME_TAILOR_MODEL` to a current model (defaults: `deepseek-v4.1-flash:free`, `gemini-3.8-flash`, `gpt-4o-mini`). |
 | `503 UNAVAILABLE` / `Connection reset` | Transient provider or network failure. The client retries twice automatically; re-run if it persists. |
 | The command seems to hang | Requests time out after 30 seconds by default. Raise `RESUME_TAILOR_TIMEOUT` (seconds) if your provider is genuinely slow. |
 | `pdflatex not found` | Install BasicTeX/MacTeX or TeX Live, then run `python tailor.py --check`. |
@@ -196,7 +197,7 @@ from.
 | `still 2 pages after one retry` | The content is too long. Trim `profile.json` or `base/resume.tex`, or allow `--max-pages 2`. |
 | `Validation failed` with a number or URL | The model tried to invent a fact. Re-run; if it repeats, remove that detail from `prompt.md` or add the real fact to `profile.json`. |
 | `clipboard` is empty on Linux | Install `xclip` or `xsel` (`sudo apt install xclip`). |
-| `unknown provider` | Use `gemini`, `openai`, `openrouter`, `groq` or `ollama`. |
+| `unknown provider` | Use `tokenharbor`, `gemini`, `openai`, `openrouter`, `groq` or `ollama`. |
 | `RESUME_TAILOR_MODEL is required` | Set it in `.env` for OpenRouter/Groq/Ollama. |
 | Anything unexpected | Re-run with `--verbose` to see the traceback and the full diff. |
 
@@ -287,7 +288,7 @@ bottom.
 | `--check` | Check inputs, TeX tools and API configuration (makes one live provider call), then exit. |
 | `--strict` | Treat unverified skills/terms as fatal instead of warnings. |
 | `--max-pages N` | Page limit (default `1`). |
-| `--provider NAME` | `gemini` (default) or an OpenAI-compatible provider. |
+| `--provider NAME` | `tokenharbor` (default), `gemini`, or another OpenAI-compatible provider. |
 | `--model NAME` | Override `RESUME_TAILOR_MODEL`. |
 | `--out-root PATH` | Output root (default `resumes/`, project-relative). |
 | `--no-color` | Disable ANSI colours. |
@@ -302,11 +303,22 @@ automatically, so it works from any directory.
 
 | Provider | `RESUME_TAILOR_PROVIDER` | Key | Default model |
 | --- | --- | --- | --- |
+| TokenHarbor (default) | `tokenharbor` | `TOKENHARBOR_API_KEY` or `OPENAI_API_KEY` | `deepseek-v4.1-flash:free` |
 | Gemini | `gemini` | `GEMINI_API_KEY` or `GOOGLE_API_KEY` | `gemini-3.8-flash` |
 | OpenAI | `openai` | `OPENAI_API_KEY` | `gpt-4o-mini` |
 | OpenRouter | `openrouter` | `OPENAI_API_KEY` | required |
 | Groq | `groq` | `OPENAI_API_KEY` | required |
 | Ollama | `ollama` | none (uses `ollama`) | required |
+
+TokenHarbor is OpenAI-compatible at `https://tokenharbor.ai/v1`. It is the
+default, so a `.env` with just the key is enough:
+
+```sh
+TOKENHARBOR_API_KEY=th-...
+```
+
+Other free models on the same key can be selected with `RESUME_TAILOR_MODEL`:
+`qwen3.8-flash:free`, `mimo-v2.6-flash:free`, `deepseek-v4-flash:free`.
 
 Example with OpenRouter:
 
@@ -327,7 +339,7 @@ python tailor.py --company acme
 
 The tool makes **at most three generation calls** per run: one generation, one
 compile fix, one page cut. A typical successful run is one call and finishes in
-10–30 seconds with Gemini Flash. Transient `429`/`5xx`/connection errors are
+10–30 seconds with a Flash-class model. Transient `429`/`5xx`/connection errors are
 retried twice at the transport level before the run fails.
 
 Every request has a **30-second timeout**, so a stalled connection fails with a

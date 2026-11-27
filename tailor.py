@@ -366,7 +366,8 @@ def _parser() -> argparse.ArgumentParser:
     source.add_argument("--jd-file", type=Path, help="read the JD from a file")
 
     parser.add_argument(
-        "--provider", help="gemini (default) or an OpenAI-compatible provider"
+        "--provider",
+        help="tokenharbor (default), gemini, or another OpenAI-compatible provider",
     )
     parser.add_argument("--model", help="override RESUME_TAILOR_MODEL")
     parser.add_argument("--max-pages", type=int, default=1, help="page limit (default: 1)")

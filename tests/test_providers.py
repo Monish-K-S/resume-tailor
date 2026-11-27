@@ -12,17 +12,63 @@ def clear_env(monkeypatch):
         "RESUME_TAILOR_MODEL",
         "GEMINI_API_KEY",
         "GOOGLE_API_KEY",
+        "TOKENHARBOR_API_KEY",
         "OPENAI_API_KEY",
         "OPENAI_BASE_URL",
     ):
         monkeypatch.delenv(name, raising=False)
 
 
-def test_gemini_is_the_default_provider(monkeypatch):
+def test_tokenharbor_is_the_default_provider(monkeypatch):
+    clear_env(monkeypatch)
+    monkeypatch.setenv("TOKENHARBOR_API_KEY", "dummy")
+
+    client = build_client()
+
+    assert type(client).__name__ == "OpenAICompatClient"
+    assert client.model == "deepseek-v4.1-flash:free"
+    assert str(client._client.base_url).startswith("https://tokenharbor.ai/v1")
+
+
+def test_tokenharbor_falls_back_to_the_openai_key(monkeypatch):
+    clear_env(monkeypatch)
+    monkeypatch.setenv("OPENAI_API_KEY", "dummy")
+
+    client = build_client("tokenharbor")
+
+    assert client.model == "deepseek-v4.1-flash:free"
+
+
+def test_tokenharbor_without_any_key_is_a_config_error(monkeypatch):
+    clear_env(monkeypatch)
+    with pytest.raises(ConfigError, match="TOKENHARBOR_API_KEY"):
+        build_client()
+
+
+def test_tokenharbor_accepts_a_model_override(monkeypatch):
+    clear_env(monkeypatch)
+    monkeypatch.setenv("TOKENHARBOR_API_KEY", "dummy")
+
+    client = build_client("tokenharbor", "deepseek-v4.1-flash")
+
+    assert client.model == "deepseek-v4.1-flash"
+
+
+def test_tokenharbor_honours_a_custom_base_url(monkeypatch):
+    clear_env(monkeypatch)
+    monkeypatch.setenv("TOKENHARBOR_API_KEY", "dummy")
+    monkeypatch.setenv("OPENAI_BASE_URL", "https://proxy.example/v1")
+
+    client = build_client("tokenharbor")
+
+    assert str(client._client.base_url).startswith("https://proxy.example/v1")
+
+
+def test_gemini_is_still_available(monkeypatch):
     clear_env(monkeypatch)
     monkeypatch.setenv("GEMINI_API_KEY", "dummy")
 
-    client = build_client()
+    client = build_client("gemini")
 
     assert type(client).__name__ == "GeminiClient"
     assert client.model == "gemini-3.8-flash"
@@ -31,7 +77,7 @@ def test_gemini_is_the_default_provider(monkeypatch):
 def test_gemini_without_key_is_a_config_error(monkeypatch):
     clear_env(monkeypatch)
     with pytest.raises(ConfigError, match="GEMINI_API_KEY"):
-        build_client()
+        build_client("gemini")
 
 
 def test_openai_has_a_default_model(monkeypatch):
