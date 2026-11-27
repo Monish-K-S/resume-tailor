@@ -1,0 +1,130 @@
+\documentclass[10pt, letterpaper]{article}
+
+\usepackage[top=0.3in, bottom=0.3in, left=0.6in, right=0.6in]{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{cmap}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{array}
+
+\hypersetup{colorlinks=true, urlcolor=black}
+
+\newcommand{\linkbtn}[2]{%
+  \href{#1}{\underline{#2}}%
+}
+
+\input{glyphtounicode}
+\pdfgentounicode=1
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\tolerance=2000
+\emergencystretch=2em
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\linespread{0.94}
+
+\titleformat{\section}{\bfseries\large}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{3pt}{2pt}
+
+\newcommand{\resumeItem}[1]{
+  \item\small{#1}
+}
+
+\newcommand{\achieveItem}[1]{
+  \item\normalsize{#1}
+}
+
+\newcommand{\roleEntry}[5]{
+  \textbf{#1} \quad {\small\linkbtn{#5}{GitHub}} \hfill \textit{#2} \\
+  \textit{#3} \hfill \textit{#4}
+}
+
+\begin{document}
+
+%---------- HEADER ----------
+\begin{center}
+  {\LARGE \textbf{Monish K S}} \\[4pt]
+  Bengaluru, Karnataka, India \quad $\vert$ \quad
+  \href{tel:7349365961}{+91 73493 65961} \quad $\vert$ \quad
+  \href{mailto:k6mg5343@gmail.com}{k6mg5343@gmail.com} \\[3pt]
+  \href{https://www.linkedin.com/in/monish-k-s-418772293/}{linkedin.com/in/monish-k-s-418772293} \quad $\vert$ \quad
+  \href{https://github.com/Monish-K-S}{github.com/Monish-K-S} \quad $\vert$ \quad
+  \href{https://monish.page}{monish.page}
+\end{center}
+
+%---------- SUMMARY ----------
+\section{Professional Summary}
+
+Backend-focused software engineer with hands-on experience designing and building distributed, real-time systems using Java, Spring Boot, and event-driven architectures. Experienced in developing scalable REST APIs, secure authentication systems, streaming applications with Apache Kafka, and containerized backend services. Strong foundation in software engineering principles, database design, distributed systems, and object-oriented programming.
+
+%---------- TECHNICAL SKILLS ----------
+\section{Technical Skills}
+
+\begin{itemize}[leftmargin=0.18in, itemsep=5pt, topsep=4pt]
+\item \textbf{Languages:} Java, Python, SQL, TypeScript
+\item \textbf{Backend Technologies:} Spring Boot, FastAPI, Node.js
+\item \textbf{Messaging \& Search:} Apache Kafka, Apache Lucene
+\item \textbf{Databases:} PostgreSQL, MySQL
+\item \textbf{Cloud Platforms:} AWS, GCP (fundamentals)
+\item \textbf{DevOps \& Tools:} Docker, Git, GitHub
+\item \textbf{Monitoring \& Analytics:} Grafana, Power BI, Tableau
+\end{itemize}
+
+%---------- PROJECTS ----------
+\section{Projects}
+
+\roleEntry{Sourcify -- AI-Powered BRD Generation Platform}{Full-Stack AI Project}{Python, FastAPI, PostgreSQL, Supabase, Sarvam AI}{July 2026 - Oct 2026}{https://github.com/Monish-K-S/brd-agent}
+\begin{itemize}[leftmargin=0.15in, noitemsep, topsep=2pt]
+\resumeItem{Built a full-stack platform that converts uploaded documents (PDF, DOCX, TXT), Gmail threads, and Google Drive files into structured 11-section Business Requirements Documents, with inline editing, PDF/DOCX export, and source-traced Q\&A.}
+\resumeItem{Designed an AI pipeline covering parsing, structured extraction, knowledge consolidation, and LLM-based generation, exposed through FastAPI REST APIs backed by PostgreSQL, SQLAlchemy, and Alembic migrations.}
+\resumeItem{Reduced BRD generation time by 37\% (22.8s to 14.4s) by deduplicating extracted items before generation and tuning the model's reasoning budget.}
+\resumeItem{Secured the application with Supabase Google OAuth (JWKS-verified JWTs), least-privilege Gmail and Drive scopes, encrypted OAuth tokens, and rate limiting.}
+\resumeItem{Wrote 291 backend and 46 frontend tests gating CI, and built an evaluation harness scoring BRD retention, groundedness, structure, and duplication.}
+\end{itemize}
+
+\vspace{1pt}
+
+\roleEntry{Log Analytics Platform}{Distributed Systems Project}{Java, Spring Boot, Apache Kafka, Apache Lucene, Grafana}{May 2026 -- Jun 2026}{https://github.com/Monish-K-S/log_analytics_platform}
+\begin{itemize}[leftmargin=0.15in, noitemsep, topsep=2pt]
+\resumeItem{Built a distributed real-time log analytics platform using Java, Spring Boot, Apache Kafka, and Apache Lucene.}
+\resumeItem{Designed a Kafka-based event-driven pipeline for ingesting, indexing, processing, and analyzing log events in real time.}
+\resumeItem{Developed full-text search functionality for fast retrieval and filtering of log records, and created REST APIs for analytics, metrics aggregation, search, and operational monitoring.}
+\resumeItem{Containerized multi-service infrastructure, integrated monitoring dashboards for observability, and wrote unit tests for analytics and anomaly detection workflows using mocking frameworks.}
+\end{itemize}
+
+\vspace{1pt}
+
+\roleEntry{Voltstream -- EV Grid Intelligence Data Pipeline}{Data Engineering Project}{Python, Databricks, OpenWeather API, Power BI}{Mar 2026 -- May 2026}{https://github.com/Monish-K-S/voltstream-data-pipeline}
+\begin{itemize}[leftmargin=0.15in, noitemsep, topsep=2pt]
+\resumeItem{Designed and implemented a multi-layered data pipeline for processing EV charging station and weather datasets using medallion architecture principles.}
+\resumeItem{Built scalable ingestion and transformation workflows for nested and semi-structured data from external APIs, with data cleaning, deduplication, and historical tracking mechanisms to improve reliability.}
+\resumeItem{Implemented geospatial enrichment and risk-scoring logic to identify potential charging station downtime caused by weather-driven grid strain.}
+\resumeItem{Designed analytical data models and BI workflows for operational monitoring, and optimized processing for efficient API utilization, incremental updates, and scalable transformations.}
+\end{itemize}
+
+%---------- EDUCATION ----------
+\section{Education}
+
+\textbf{MVJ College of Engineering} \hfill Bengaluru, Karnataka\\
+Bachelor of Engineering -- Computer Science \& Engineering (Data Science) \hfill 2023 -- 2027\\
+\textbf{GPA:} 9.11/10 \\
+\textbf{Relevant Coursework:} Data Structures \& Algorithms, Operating Systems, Database Management Systems, Computer Networks
+
+%---------- ACHIEVEMENTS ----------
+\section{Achievements}
+
+\begin{itemize}[leftmargin=0.15in, itemsep=3pt, topsep=3pt]
+
+\achieveItem{\textbf{Back to the Metadata Hackathon (OpenMetadata), April 2026:} Built a \href{https://github.com/Monish-K-S/notion-om-connector}{Notion connector for OpenMetadata}, enabling metadata synchronization between Notion and OpenMetadata.}
+
+\achieveItem{\textbf{Data Driven Riddle Contest -- VertechX 13.0, MVJCE, Nov 2025:} Won 1st place in a data-driven problem-solving contest conducted as part of the department's technical fest.}
+
+\end{itemize}
+
+\end{document}
