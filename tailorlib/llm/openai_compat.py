@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Sequence
 
 from ..errors import ConfigError, LLMError
-from .base import Message, parse_json_object
+from .base import Message, configured_timeout, parse_json_object
 
 
 class OpenAICompatClient:
@@ -17,10 +17,16 @@ class OpenAICompatClient:
                 "openai is not installed. Run: pip install openai"
             ) from exc
 
+        timeout = configured_timeout()
         self._client = (
-            OpenAI(api_key=api_key, base_url=base_url)
+            OpenAI(
+                api_key=api_key,
+                base_url=base_url,
+                timeout=timeout,
+                max_retries=1,
+            )
             if base_url
-            else OpenAI(api_key=api_key)
+            else OpenAI(api_key=api_key, timeout=timeout, max_retries=1)
         )
         self.model = model
         # Only OpenAI itself is guaranteed to support strict json_schema.

@@ -85,6 +85,7 @@ def make_client(outcomes) -> tuple[GeminiClient, FakeModels]:
 
 
 def test_complete_disables_thinking_and_parses_json(monkeypatch):
+    monkeypatch.delenv("RESUME_TAILOR_TIMEOUT", raising=False)
     client, models = make_client([FakeResponse()])
 
     result = client.complete(
@@ -96,6 +97,7 @@ def test_complete_disables_thinking_and_parses_json(monkeypatch):
     assert result == {"body": "hello"}
     config = models.requests[0]["config"]
     assert config.thinking_config.thinking_budget == 0
+    assert config.http_options.timeout == 30_000
     assert "additionalProperties" not in config.response_schema
 
 
@@ -145,8 +147,29 @@ def test_complete_reports_empty_response():
 
 
 def test_ping_is_a_live_request(monkeypatch):
+    monkeypatch.delenv("RESUME_TAILOR_TIMEOUT", raising=False)
     client, models = make_client([FakeResponse()])
 
     client.ping()
 
     assert models.requests[0]["contents"] == "Reply with the single word: ok"
+    assert models.requests[0]["config"].http_options.timeout == 15_000
+
+
+def test_configured_timeout_defaults_overrides_and_clamps(monkeypatch):
+    from tailorlib.llm.base import configured_timeout
+
+    monkeypatch.delenv("RESUME_TAILOR_TIMEOUT", raising=False)
+    assert configured_timeout() == 30.0
+
+    monkeypatch.setenv("RESUME_TAILOR_TIMEOUT", "45")
+    assert configured_timeout() == 45.0
+
+    monkeypatch.setenv("RESUME_TAILOR_TIMEOUT", "1")
+    assert configured_timeout() == 5.0
+
+    monkeypatch.setenv("RESUME_TAILOR_TIMEOUT", "999")
+    assert configured_timeout() == 300.0
+
+    monkeypatch.setenv("RESUME_TAILOR_TIMEOUT", "nonsense")
+    assert configured_timeout() == 30.0

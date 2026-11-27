@@ -190,6 +190,7 @@ from.
 | `google-genai is not installed` even though you installed it | Your shell's `python` is probably an alias to a system interpreter that bypasses the venv. Run `.venv/bin/python tailor.py ...`, or let the CLI re-exec automatically (default). |
 | `404 NOT_FOUND ... no longer available to new users` | The model was retired. Set `RESUME_TAILOR_MODEL` to a current model (the default is `gemini-3.8-flash`). |
 | `503 UNAVAILABLE` / `Connection reset` | Transient provider or network failure. The client retries twice automatically; re-run if it persists. |
+| The command seems to hang | Requests time out after 30 seconds by default. Raise `RESUME_TAILOR_TIMEOUT` (seconds) if your provider is genuinely slow. |
 | `pdflatex not found` | Install BasicTeX/MacTeX or TeX Live, then run `python tailor.py --check`. |
 | `File 'enumitem.sty' not found` | `sudo tlmgr install enumitem titlesec cm-super`, or use `tlmgr --usermode`. |
 | `still 2 pages after one retry` | The content is too long. Trim `profile.json` or `base/resume.tex`, or allow `--max-pages 2`. |
@@ -328,6 +329,14 @@ The tool makes **at most three generation calls** per run: one generation, one
 compile fix, one page cut. A typical successful run is one call and finishes in
 10–30 seconds with Gemini Flash. Transient `429`/`5xx`/connection errors are
 retried twice at the transport level before the run fails.
+
+Every request has a **30-second timeout**, so a stalled connection fails with a
+clear error instead of hanging. Override it with `RESUME_TAILOR_TIMEOUT`
+(seconds, clamped to 5–300):
+
+```sh
+RESUME_TAILOR_TIMEOUT=60 python tailor.py --company acme
+```
 
 ---
 

@@ -3,10 +3,23 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
 from typing import Any, Protocol, Sequence
 
 from ..errors import LLMError
+
+DEFAULT_TIMEOUT_S = 30.0
+
+
+def configured_timeout(default: float = DEFAULT_TIMEOUT_S) -> float:
+    """Per-request timeout in seconds (RESUME_TAILOR_TIMEOUT overrides)."""
+    raw = os.getenv("RESUME_TAILOR_TIMEOUT")
+    try:
+        seconds = float(raw) if raw else default
+    except ValueError:
+        seconds = default
+    return min(max(seconds, 5.0), 300.0)
 
 
 @dataclass(frozen=True)

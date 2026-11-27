@@ -7,9 +7,10 @@ import time
 from typing import Any, Sequence
 
 from ..errors import ConfigError, LLMError
-from .base import Message, parse_json_object
+from .base import Message, configured_timeout, parse_json_object
 
-_RETRY_DELAYS = (1.0, 2.0, 4.0)
+_RETRY_DELAYS = (1.0, 2.0)
+_PING_TIMEOUT_S = 15.0
 
 _TRANSIENT_MARKERS = (
     "resource_exhausted",
@@ -93,7 +94,13 @@ class GeminiClient:
         except ImportError as exc:  # pragma: no cover - dependency error
             raise ConfigError("google-genai is not installed") from exc
 
-        kwargs: dict[str, Any] = {"temperature": 0.0, "max_output_tokens": 8}
+        kwargs: dict[str, Any] = {
+            "temperature": 0.0,
+            "max_output_tokens": 8,
+            "http_options": types.HttpOptions(
+                timeout=int(configured_timeout(_PING_TIMEOUT_S) * 1000)
+            ),
+        }
         thinking = _thinking_config(types)
         if thinking is not None:
             kwargs["thinking_config"] = thinking
@@ -132,6 +139,9 @@ class GeminiClient:
             "max_output_tokens": max_tokens,
             "response_mime_type": "application/json",
             "response_schema": _sanitize_schema(schema),
+            "http_options": types.HttpOptions(
+                timeout=int(configured_timeout() * 1000)
+            ),
         }
         thinking = _thinking_config(types)
         if thinking is not None:
