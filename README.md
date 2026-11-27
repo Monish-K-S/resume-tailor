@@ -36,8 +36,14 @@ python tailor.py --check
 
 # 4. Tailor your resume
 python tailor.py --company stripe
-# paste the job description, then press Ctrl-D
+# paste the job description, press Enter, then Ctrl-D
 ```
+
+> **Ctrl-D doesn't submit?** It only signals end-of-input at the start of an
+> empty line. If you pasted text without a trailing newline, the first Ctrl-D
+> just flushes it — press **Enter**, then **Ctrl-D** (or press Ctrl-D twice).
+> Easier alternatives: `--clipboard`, or pipe it:
+> `pbpaste | python tailor.py --company stripe --stdin`.
 
 The result lands in:
 
@@ -106,16 +112,24 @@ sudo apt install texlive-latex-recommended texlive-latex-extra poppler-utils
 
 ### 1. Pick how to provide the job description
 
-**Paste it** (default). You will see a prompt, then finish with <kbd>Ctrl-D</kbd>:
+**Paste it** (default). Paste the JD, press <kbd>Enter</kbd>, then
+<kbd>Ctrl-D</kbd>. If nothing happens, press <kbd>Ctrl-D</kbd> a second time —
+the first one only flushes a line that did not end with a newline.
 
 ```sh
 python tailor.py --company stripe
 ```
 
-**From the clipboard** — copy the JD first:
+**From the clipboard** — copy the JD first, then:
 
 ```sh
 python tailor.py --company stripe --clipboard
+```
+
+**Piped on macOS** — no Ctrl-D needed:
+
+```sh
+pbpaste | python tailor.py --company stripe --stdin
 ```
 
 **From a file** — handy for long JDs or repeated runs:

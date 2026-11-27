@@ -213,6 +213,17 @@ def test_check_mode_reports_live_provider_failure(project, monkeypatch, capsys):
     assert "transient provider error" in out
 
 
+def test_read_jd_from_piped_stdin(monkeypatch):
+    import io
+
+    monkeypatch.setattr(tailor.sys, "stdin", io.StringIO("Piped job description.\n"))
+    args = type(
+        "Args", (), {"jd_file": None, "clipboard": False, "stdin": True}
+    )()
+
+    assert tailor._read_jd(args) == "Piped job description."
+
+
 def test_parse_dotenv_handles_real_world_syntax(tmp_path, monkeypatch):
     for name in (
         "EXPORTED",

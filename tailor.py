@@ -140,7 +140,13 @@ def _read_jd(args: argparse.Namespace) -> str:
             raise InputError(f"could not read the clipboard: {exc}") from exc
     else:
         if sys.stdin.isatty() and not args.stdin:
-            print("Paste the job description, then press Ctrl-D:", file=sys.stderr)
+            print(
+                "Paste the job description.\n"
+                "When finished: press Enter, then Ctrl-D "
+                "(if nothing happens, press Ctrl-D again):",
+                file=sys.stderr,
+                flush=True,
+            )
         text = sys.stdin.read()
 
     text = text.strip()
@@ -305,6 +311,12 @@ def _tailor(args: argparse.Namespace) -> int:
     prompt = _read_text(PROMPT_PATH, "prompt.md")
     jd = _read_jd(args)
     client = build_client(args.provider, args.model)
+    print(
+        f"Generating a tailored resume for {args.company}... "
+        "(usually 10-30 seconds)",
+        file=sys.stderr,
+        flush=True,
+    )
 
     out_dir = _out_dir(args.company, args.out_root)
     request = TailorRequest(
