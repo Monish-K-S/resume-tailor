@@ -1,0 +1,147 @@
+{
+  "identity": {
+    "name": "Monish K S",
+    "location": "Bengaluru, Karnataka, India",
+    "phone": "+91 73493 65961",
+    "phone_href": "tel:7349365961",
+    "email": "k6mg5343@gmail.com",
+    "links": {
+      "linkedin": "https://www.linkedin.com/in/monish-k-s-418772293/",
+      "github": "https://github.com/Monish-K-S",
+      "portfolio": "https://monish.page"
+    }
+  },
+  "headline": "Backend-focused software engineer",
+  "summary": "Backend-focused software engineer with hands-on experience designing and building distributed, real-time systems using Java, Spring Boot, and event-driven architectures. Experienced in developing scalable REST APIs, secure authentication systems, streaming applications with Apache Kafka, and containerized backend services. Strong foundation in software engineering principles, database design, distributed systems, and object-oriented programming.",
+  "skills": {
+    "Languages": [
+      "Java",
+      "Python",
+      "SQL",
+      "TypeScript"
+    ],
+    "Backend Technologies": [
+      "Spring Boot",
+      "FastAPI",
+      "Node.js"
+    ],
+    "Messaging & Search": [
+      "Apache Kafka",
+      "Apache Lucene"
+    ],
+    "Databases": [
+      "PostgreSQL",
+      "MySQL"
+    ],
+    "Cloud Platforms": [
+      "AWS",
+      "GCP (fundamentals)"
+    ],
+    "DevOps & Tools": [
+      "Docker",
+      "Git",
+      "GitHub"
+    ],
+    "Monitoring & Analytics": [
+      "Grafana",
+      "Power BI",
+      "Tableau"
+    ]
+  },
+  "projects": [
+    {
+      "name": "Sourcify -- AI-Powered BRD Generation Platform",
+      "subtitle": "Full-Stack AI Project",
+      "stack": [
+        "Python",
+        "FastAPI",
+        "PostgreSQL",
+        "Supabase",
+        "Sarvam AI"
+      ],
+      "dates": "July 2026 - Oct 2026",
+      "repo": "https://github.com/Monish-K-S/brd-agent",
+      "bullets": [
+        "Built a full-stack platform that converts uploaded documents (PDF, DOCX, TXT), Gmail threads, and Google Drive files into structured 11-section Business Requirements Documents, with inline editing, PDF/DOCX export, and source-traced Q&A.",
+        "Designed an AI pipeline covering parsing, structured extraction, knowledge consolidation, and LLM-based generation, exposed through FastAPI REST APIs backed by PostgreSQL, SQLAlchemy, and Alembic migrations.",
+        "Reduced BRD generation time by 37% (22.8s to 14.4s) by deduplicating extracted items before generation and tuning the model's reasoning budget.",
+        "Secured the application with Supabase Google OAuth (JWKS-verified JWTs), least-privilege Gmail and Drive scopes, encrypted OAuth tokens, and rate limiting.",
+        "Wrote 291 backend and 46 frontend tests gating CI, and built an evaluation harness scoring BRD retention, groundedness, structure, and duplication."
+      ]
+    },
+    {
+      "name": "Log Analytics Platform",
+      "subtitle": "Distributed Systems Project",
+      "stack": [
+        "Java",
+        "Spring Boot",
+        "Apache Kafka",
+        "Apache Lucene",
+        "Grafana"
+      ],
+      "dates": "May 2026 -- Jun 2026",
+      "repo": "https://github.com/Monish-K-S/log_analytics_platform",
+      "bullets": [
+        "Built a distributed real-time log analytics platform using Java, Spring Boot, Apache Kafka, and Apache Lucene.",
+        "Designed a Kafka-based event-driven pipeline for ingesting, indexing, processing, and analyzing log events in real time.",
+        "Developed full-text search functionality for fast retrieval and filtering of log records, and created REST APIs for analytics, metrics aggregation, search, and operational monitoring.",
+        "Containerized multi-service infrastructure, integrated monitoring dashboards for observability, and wrote unit tests for analytics and anomaly detection workflows using mocking frameworks."
+      ]
+    },
+    {
+      "name": "Voltstream -- EV Grid Intelligence Data Pipeline",
+      "subtitle": "Data Engineering Project",
+      "stack": [
+        "Python",
+        "Databricks",
+        "OpenWeather API",
+        "Power BI"
+      ],
+      "dates": "Mar 2026 -- May 2026",
+      "repo": "https://github.com/Monish-K-S/voltstream-data-pipeline",
+      "bullets": [
+        "Designed and implemented a multi-layered data pipeline for processing EV charging station and weather datasets using medallion architecture principles.",
+        "Built scalable ingestion and transformation workflows for nested and semi-structured data from external APIs, with data cleaning, deduplication, and historical tracking mechanisms to improve reliability.",
+        "Implemented geospatial enrichment and risk-scoring logic to identify potential charging station downtime caused by weather-driven grid strain.",
+        "Designed analytical data models and BI workflows for operational monitoring, and optimized processing for efficient API utilization, incremental updates, and scalable transformations."
+      ]
+    }
+  ],
+  "education": {
+    "institution": "MVJ College of Engineering",
+    "location": "Bengaluru, Karnataka",
+    "degree": "Bachelor of Engineering -- Computer Science & Engineering (Data Science)",
+    "dates": "2023 -- 2027",
+    "gpa": "9.11/10",
+    "coursework": [
+      "Data Structures & Algorithms",
+      "Operating Systems",
+      "Database Management Systems",
+      "Computer Networks"
+    ]
+  },
+  "achievements": [
+    {
+      "title": "Back to the Metadata Hackathon (OpenMetadata)",
+      "date": "April 2026",
+      "description": "Built a Notion connector for OpenMetadata, enabling metadata synchronization between Notion and OpenMetadata.",
+      "link": "https://github.com/Monish-K-S/notion-om-connector"
+    },
+    {
+      "title": "Data Driven Riddle Contest -- VertechX 13.0, MVJCE",
+      "date": "Nov 2025",
+      "description": "Won 1st place in a data-driven problem-solving contest conducted as part of the department's technical fest."
+    }
+  ],
+  "additional": {
+    "internships": [],
+    "certifications": [],
+    "other_projects": [],
+    "open_source": [],
+    "publications": [],
+    "awards": [],
+    "volunteering": [],
+    "spoken_languages": [],
+    "coursework_extra": []
+  }
+}
