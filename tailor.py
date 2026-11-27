@@ -104,9 +104,21 @@ def _use_project_venv(argv: list[str] | None, *, verbose: bool = False) -> None:
         return
 
 
+def _example_hint(path: Path) -> str | None:
+    if path == PROFILE_PATH:
+        return "cp profile.example.json profile.json"
+    if path == BASE_PATH:
+        return "cp base/resume.example.tex base/resume.tex"
+    return None
+
+
 def _read_text(path: Path, label: str) -> str:
     if not path.exists():
-        raise InputError(f"{label} not found: {path}")
+        message = f"{label} not found: {path}"
+        hint = _example_hint(path)
+        if hint:
+            message += f"\nCreate it first: {hint}"
+        raise InputError(message)
     try:
         return path.read_text(encoding="utf-8")
     except OSError as exc:
@@ -240,7 +252,9 @@ def _check(args: argparse.Namespace) -> int:
         ("profile.json", PROFILE_PATH),
         ("prompt.md", PROMPT_PATH),
     ):
-        rows.append((label, path.exists(), str(path)))
+        hint = _example_hint(path)
+        detail = str(path) if path.exists() or not hint else f"{path}  ->  {hint}"
+        rows.append((label, path.exists(), detail))
 
     pdflatex = find_pdflatex()
     rows.append(("pdflatex", bool(pdflatex), pdflatex or "not found"))
@@ -259,13 +273,13 @@ def _check(args: argparse.Namespace) -> int:
             )
         )
     except TailorError as exc:
-        rows.append(("resume structure", False, exc.message))
+        rows.append(("resume structure", False, " ".join(exc.message.split())))
 
     try:
         profile = _load_profile()
         rows.append(("profile content", True, f"{len(profile)} top-level keys"))
     except TailorError as exc:
-        rows.append(("profile content", False, exc.message))
+        rows.append(("profile content", False, " ".join(exc.message.split())))
 
     try:
         client = build_client(args.provider, args.model)

@@ -357,3 +357,37 @@ def test_reexec_is_skipped_without_a_venv(tmp_path, monkeypatch):
     tailor._use_project_venv(None)
 
     assert calls == []
+
+
+def test_missing_profile_suggests_the_example(project):
+    (project / "profile.json").unlink()
+
+    with pytest.raises(tailor.InputError) as exc:
+        tailor._load_profile()
+
+    assert "cp profile.example.json profile.json" in str(exc.value)
+
+
+def test_missing_base_suggests_the_example(project):
+    (project / "base" / "resume.tex").unlink()
+
+    with pytest.raises(tailor.InputError) as exc:
+        tailor._read_text(tailor.BASE_PATH, "base resume")
+
+    assert "cp base/resume.example.tex base/resume.tex" in str(exc.value)
+
+
+def test_check_mode_shows_copy_hints(project, monkeypatch, capsys):
+    _stub_tools(monkeypatch)
+    (project / "profile.json").unlink()
+
+    def no_client(provider, model):
+        raise tailor.ConfigError("no key")
+
+    monkeypatch.setattr(tailor, "build_client", no_client)
+
+    assert tailor._check(_check_args()) == 2
+
+    out = capsys.readouterr().out
+    assert "profile.json" in out
+    assert "cp profile.example.json profile.json" in out

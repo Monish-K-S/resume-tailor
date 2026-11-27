@@ -27,14 +27,19 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-# 2. Add your API key
+# 2. Add your resume and profile (both are git-ignored)
+cp profile.example.json profile.json
+cp base/resume.example.tex base/resume.tex
+# edit both files with your real details
+
+# 3. Add your API key
 cp .env.example .env
 # open .env and set TOKENHARBOR_API_KEY=... (free DeepSeek V4.1 Flash)
 
-# 3. Check that Python, TeX and the API key are all found
+# 4. Check that Python, TeX and the API key are all found
 python tailor.py --check
 
-# 4. Tailor your resume
+# 5. Tailor your resume
 python tailor.py --company stripe
 # paste the job description, press Enter, then Ctrl-D
 ```
@@ -56,6 +61,10 @@ resumes/stripe_2026-11-27/
 
 Open `resume.pdf`. That's it.
 
+> The example files are placeholders (`Jordan Doe`, `example.com` links).
+> `profile.json` and `base/resume.tex` are git-ignored, so your real details
+> never get committed.
+
 > **Always use the venv's Python.** After `source .venv/bin/activate`, `python`
 > is the venv interpreter. If you skip activation, call
 > `.venv/bin/python tailor.py ...` explicitly. If your shell aliases `python`
@@ -75,6 +84,8 @@ Open `resume.pdf`. That's it.
 - **A TeX distribution** with `pdflatex` (BasicTeX is enough on macOS)
 - **`pdfinfo` and `pdftotext`** (from `poppler`)
 - **An API key** for TokenHarbor (default) or any OpenAI-compatible provider
+- **Your resume** as a one-page LaTeX file and a `profile.json` fact pool —
+  start from the included examples
 
 ### Installing TeX
 
@@ -186,6 +197,8 @@ from.
 
 | Message | What to do |
 | --- | --- |
+| `profile.json not found` | Copy the example: `cp profile.example.json profile.json`, then fill it in with your details. |
+| `base resume not found` | Copy the example: `cp base/resume.example.tex base/resume.tex`, then edit it. |
 | `TOKENHARBOR_API_KEY (or OPENAI_API_KEY) is not set` | Put the key in `.env` at the project root, or export it in your shell. Also make sure you are running the venv's Python (see [Quick start](#quick-start)). |
 | `GEMINI_API_KEY (or GOOGLE_API_KEY) is not set` | Only used with `--provider gemini`. Put the key in `.env` or export it. |
 | `google-genai is not installed` even though you installed it | Your shell's `python` is probably an alias to a system interpreter that bypasses the venv. Run `.venv/bin/python tailor.py ...`, or let the CLI re-exec automatically (default). |
@@ -230,7 +243,14 @@ A failed run never overwrites a previous good `resume.pdf`.
 
 ### `profile.json` — the fact pool
 
-This is the **only** source of facts the model may use (together with the base
+Start from `profile.example.json`:
+
+```sh
+cp profile.example.json profile.json
+```
+
+The real `profile.json` is git-ignored; only the example is committed. This is
+the **only** source of facts the model may use (together with the base
 resume). If a number, tool or achievement is not here, it does not exist as far
 as the tool is concerned.
 
@@ -260,6 +280,14 @@ string in the file, so use whatever structure is clearest to you.
 Numbers you add here become legal to use in the tailored resume.
 
 ### `base/resume.tex` — the starting document
+
+Start from `base/resume.example.tex`:
+
+```sh
+cp base/resume.example.tex base/resume.tex
+```
+
+The real `base/resume.tex` is git-ignored; only the example is committed.
 
 - Keep it compiling to **one page**.
 - The preamble is frozen; only the body between `\begin{document}` and
@@ -398,6 +426,11 @@ Only text leaves your machine: `profile.json`, `base/resume.tex`, the job
 description and `prompt.md`. No PDF, image or rendered page is ever uploaded.
 The PDF is compiled locally by `pdflatex` with `-no-shell-escape`.
 
+`profile.json` and `base/resume.tex` are git-ignored, so your contact details
+and work history never end up in the repository. The committed
+`profile.example.json` and `base/resume.example.tex` contain placeholder data
+only.
+
 ## Project layout
 
 ```
@@ -411,9 +444,11 @@ tailorlib/
 ├── pipeline.py         generate → validate → compile → page retry loop
 ├── report.py           JD keyword gap analysis + unified diff
 └── llm/                Gemini and OpenAI-compatible adapters
-base/resume.tex         frozen starting document
-profile.json            authoritative fact pool
-prompt.md               editing strategy
-resumes/                generated output (git-ignored)
-tests/                  pytest suite
+base/resume.example.tex  committed template
+base/resume.tex          your resume (git-ignored)
+profile.example.json     committed template
+profile.json             your facts (git-ignored)
+prompt.md                editing strategy
+resumes/                 generated output (git-ignored)
+tests/                   pytest suite
 ```

@@ -6,6 +6,10 @@ __pycache__/
 .pytest_cache/
 .work/
 
+# Personal resume inputs — copy the examples, never commit these.
+/profile.json
+/base/resume.tex
+
 # Generated resumes are local artefacts.
 resumes/*
 !resumes/.gitkeep

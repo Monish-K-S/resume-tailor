@@ -1,0 +1,128 @@
+{
+  "identity": {
+    "name": "Jordan Doe",
+    "location": "San Francisco, California, USA",
+    "phone": "+1 555 010 2030",
+    "phone_href": "tel:+15550102030",
+    "email": "jordan.doe@example.com",
+    "links": {
+      "linkedin": "https://www.linkedin.com/in/jordandoe/",
+      "github": "https://github.com/jordandoe",
+      "portfolio": "https://jordandoe.example.com"
+    }
+  },
+  "headline": "Backend-focused software engineer",
+  "summary": "Backend-focused software engineer with experience designing and building distributed, real-time systems using Python, Java, FastAPI, and event-driven architectures. Experienced in developing scalable REST APIs, secure authentication systems, streaming applications with Apache Kafka, and containerized backend services. Strong foundation in software engineering principles, database design, distributed systems, and object-oriented programming.",
+  "skills": {
+    "Languages": [
+      "Python",
+      "Java",
+      "SQL",
+      "TypeScript"
+    ],
+    "Backend Technologies": [
+      "FastAPI",
+      "Spring Boot",
+      "Node.js"
+    ],
+    "Messaging & Search": [
+      "Apache Kafka",
+      "Elasticsearch"
+    ],
+    "Databases": [
+      "PostgreSQL",
+      "Redis"
+    ],
+    "Cloud Platforms": [
+      "AWS",
+      "Docker"
+    ],
+    "DevOps & Tools": [
+      "Git",
+      "GitHub Actions",
+      "Docker Compose"
+    ],
+    "Monitoring & Analytics": [
+      "Grafana",
+      "Prometheus",
+      "Power BI"
+    ]
+  },
+  "projects": [
+    {
+      "name": "Taskflow -- Collaborative Task Management Platform",
+      "subtitle": "Full-Stack Project",
+      "stack": [
+        "Python",
+        "FastAPI",
+        "PostgreSQL",
+        "React"
+      ],
+      "dates": "Jan 2025 - Apr 2025",
+      "repo": "https://github.com/jordandoe/taskflow",
+      "bullets": [
+        "Built a full-stack platform for creating, assigning, and tracking tasks across teams, with role-based access control, activity history, and CSV export.",
+        "Designed a FastAPI REST API backed by PostgreSQL and SQLAlchemy, with Alembic migrations and background jobs for email reminders.",
+        "Reduced average page load time by 42% (1.8s to 1.05s) by adding query indexes and caching frequently read project metadata.",
+        "Wrote 120 backend and 35 frontend tests gating CI, and documented the API with OpenAPI examples."
+      ]
+    },
+    {
+      "name": "Streamline -- Real-Time Event Analytics Pipeline",
+      "subtitle": "Distributed Systems Project",
+      "stack": [
+        "Java",
+        "Spring Boot",
+        "Apache Kafka",
+        "PostgreSQL",
+        "Grafana"
+      ],
+      "dates": "Sep 2024 - Dec 2024",
+      "repo": "https://github.com/jordandoe/streamline",
+      "bullets": [
+        "Built a distributed real-time event analytics pipeline using Java, Spring Boot, Apache Kafka, and PostgreSQL.",
+        "Designed a Kafka-based ingestion layer that processes 2.4M events per day with at-least-once delivery and idempotent consumers.",
+        "Developed REST APIs for metrics aggregation, search, and operational monitoring, and added Grafana dashboards for latency and throughput.",
+        "Containerized the services with Docker Compose and wrote unit and integration tests for aggregation and anomaly detection workflows."
+      ]
+    }
+  ],
+  "education": {
+    "institution": "Example University",
+    "location": "San Francisco, California",
+    "degree": "Bachelor of Science -- Computer Science",
+    "dates": "2022 -- 2026",
+    "gpa": "3.8/4.0",
+    "coursework": [
+      "Data Structures & Algorithms",
+      "Operating Systems",
+      "Database Management Systems",
+      "Computer Networks"
+    ]
+  },
+  "achievements": [
+    {
+      "title": "Example Hackathon",
+      "date": "April 2025",
+      "description": "Built an open-source Notion connector for a metadata catalog, enabling scheduled synchronization between the two systems.",
+      "link": "https://github.com/jordandoe/metadata-connector"
+    },
+    {
+      "title": "Regional Data Challenge",
+      "date": "Nov 2024",
+      "description": "Won 1st place in a data-driven problem-solving contest against 40 teams.",
+      "link": ""
+    }
+  ],
+  "additional": {
+    "internships": [],
+    "certifications": [],
+    "other_projects": [],
+    "open_source": [],
+    "publications": [],
+    "awards": [],
+    "volunteering": [],
+    "spoken_languages": [],
+    "coursework_extra": []
+  }
+}

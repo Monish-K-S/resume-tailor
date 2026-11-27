@@ -1,0 +1,119 @@
+\documentclass[10pt, letterpaper]{article}
+
+\usepackage[top=0.3in, bottom=0.3in, left=0.6in, right=0.6in]{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{cmap}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{array}
+
+\hypersetup{colorlinks=true, urlcolor=black}
+
+\newcommand{\linkbtn}[2]{%
+  \href{#1}{\underline{#2}}%
+}
+
+\input{glyphtounicode}
+\pdfgentounicode=1
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\tolerance=2000
+\emergencystretch=2em
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\linespread{0.94}
+
+\titleformat{\section}{\bfseries\large}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{3pt}{2pt}
+
+\newcommand{\resumeItem}[1]{
+  \item\small{#1}
+}
+
+\newcommand{\achieveItem}[1]{
+  \item\normalsize{#1}
+}
+
+\newcommand{\roleEntry}[5]{
+  \textbf{#1} \quad {\small\linkbtn{#5}{GitHub}} \hfill \textit{#2} \\
+  \textit{#3} \hfill \textit{#4}
+}
+
+\begin{document}
+
+%---------- HEADER ----------
+\begin{center}
+  {\LARGE \textbf{Jordan Doe}} \\[4pt]
+  San Francisco, California, USA \quad $\vert$ \quad
+  \href{tel:+15550102030}{+1 555 010 2030} \quad $\vert$ \quad
+  \href{mailto:jordan.doe@example.com}{jordan.doe@example.com} \\[3pt]
+  \href{https://www.linkedin.com/in/jordandoe/}{linkedin.com/in/jordandoe} \quad $\vert$ \quad
+  \href{https://github.com/jordandoe}{github.com/jordandoe} \quad $\vert$ \quad
+  \href{https://jordandoe.example.com}{jordandoe.example.com}
+\end{center}
+
+%---------- SUMMARY ----------
+\section{Professional Summary}
+
+Backend-focused software engineer with experience designing and building distributed, real-time systems using Python, Java, FastAPI, and event-driven architectures. Experienced in developing scalable REST APIs, secure authentication systems, streaming applications with Apache Kafka, and containerized backend services. Strong foundation in software engineering principles, database design, distributed systems, and object-oriented programming.
+
+%---------- TECHNICAL SKILLS ----------
+\section{Technical Skills}
+
+\begin{itemize}[leftmargin=0.18in, itemsep=5pt, topsep=4pt]
+\item \textbf{Languages:} Python, Java, SQL, TypeScript
+\item \textbf{Backend Technologies:} FastAPI, Spring Boot, Node.js
+\item \textbf{Messaging \& Search:} Apache Kafka, Elasticsearch
+\item \textbf{Databases:} PostgreSQL, Redis
+\item \textbf{Cloud Platforms:} AWS, Docker
+\item \textbf{DevOps \& Tools:} Git, GitHub Actions, Docker Compose
+\item \textbf{Monitoring \& Analytics:} Grafana, Prometheus, Power BI
+\end{itemize}
+
+%---------- PROJECTS ----------
+\section{Projects}
+
+\roleEntry{Taskflow -- Collaborative Task Management Platform}{Full-Stack Project}{Python, FastAPI, PostgreSQL, React}{Jan 2025 - Apr 2025}{https://github.com/jordandoe/taskflow}
+\begin{itemize}[leftmargin=0.15in, noitemsep, topsep=2pt]
+\resumeItem{Built a full-stack platform for creating, assigning, and tracking tasks across teams, with role-based access control, activity history, and CSV export.}
+\resumeItem{Designed a FastAPI REST API backed by PostgreSQL and SQLAlchemy, with Alembic migrations and background jobs for email reminders.}
+\resumeItem{Reduced average page load time by 42\% (1.8s to 1.05s) by adding query indexes and caching frequently read project metadata.}
+\resumeItem{Wrote 120 backend and 35 frontend tests gating CI, and documented the API with OpenAPI examples.}
+\end{itemize}
+
+\vspace{1pt}
+
+\roleEntry{Streamline -- Real-Time Event Analytics Pipeline}{Distributed Systems Project}{Java, Spring Boot, Apache Kafka, PostgreSQL, Grafana}{Sep 2024 - Dec 2024}{https://github.com/jordandoe/streamline}
+\begin{itemize}[leftmargin=0.15in, noitemsep, topsep=2pt]
+\resumeItem{Built a distributed real-time event analytics pipeline using Java, Spring Boot, Apache Kafka, and PostgreSQL.}
+\resumeItem{Designed a Kafka-based ingestion layer that processes 2.4M events per day with at-least-once delivery and idempotent consumers.}
+\resumeItem{Developed REST APIs for metrics aggregation, search, and operational monitoring, and added Grafana dashboards for latency and throughput.}
+\resumeItem{Containerized the services with Docker Compose and wrote unit and integration tests for aggregation and anomaly detection workflows.}
+\end{itemize}
+
+%---------- EDUCATION ----------
+\section{Education}
+
+\textbf{Example University} \hfill San Francisco, California\\
+Bachelor of Science -- Computer Science \hfill 2022 -- 2026\\
+\textbf{GPA:} 3.8/4.0 \\
+\textbf{Relevant Coursework:} Data Structures \& Algorithms, Operating Systems, Database Management Systems, Computer Networks
+
+%---------- ACHIEVEMENTS ----------
+\section{Achievements}
+
+\begin{itemize}[leftmargin=0.15in, itemsep=3pt, topsep=3pt]
+
+\achieveItem{\textbf{Example Hackathon, April 2025:} Built a \href{https://github.com/jordandoe/metadata-connector}{Notion connector for a metadata catalog}, enabling scheduled synchronization between the two systems.}
+
+\achieveItem{\textbf{Regional Data Challenge, Nov 2024:} Won 1st place in a data-driven problem-solving contest against 40 teams.}
+
+\end{itemize}
+
+\end{document}
